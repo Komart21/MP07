@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.project.Controller">
+    <top>
+        <HBox alignment="CENTER" style="-fx-background-color: #2196F3;">
+            <Label text="Nintendo DB" style="-fx-text-fill: white; -fx-font-size: 20px;" />
+        </HBox>
+    </top>
+
+    <left>
+        <VBox spacing="10" alignment="CENTER" fillWidth="true" VBox.vgrow="ALWAYS">
+            <ChoiceBox fx:id="categoryChoiceBox" maxWidth="200" />
+            <ListView fx:id="itemListView" prefWidth="200" VBox.vgrow="ALWAYS" />
+        </VBox>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <VBox alignment="CENTER" spacing="10">
+                <ImageView fx:id="itemImageView" fitWidth="200" fitHeight="200" preserveRatio="true"/>
+                <HBox alignment="CENTER" spacing="5"> 
+                    <Text fx:id="itemTitle" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                </HBox>
+                <HBox alignment="CENTER" spacing="5"> 
+                    <Text fx:id="itemDescription" style="-fx-font-size: 14px;"/>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

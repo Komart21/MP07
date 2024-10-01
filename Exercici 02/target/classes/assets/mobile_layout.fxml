@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.project.MobileController" spacing="10" style="-fx-padding: 10;">
+    
+    <!-- Encabezado -->
+    <HBox alignment="CENTER" style="-fx-background-color: #2196F3; -fx-padding: 10;">
+        <Button fx:id="backButton" text="Back" onAction="#onBackButtonClick" style="-fx-background-color: #ffffff; -fx-text-fill: #2196F3;" />
+        <Label text="Nintendo DB" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-hgrow: ALWAYS;" />
+    </HBox>
+
+    <!-- Panel de Menú -->
+    <VBox fx:id="menuPanel" spacing="10" alignment="CENTER" style="-fx-padding: 20;">
+        <Button fx:id="jocsButton" text="Jocs" onAction="#onJocsButtonClick" />
+        <Button fx:id="personatgesButton" text="Personatges" onAction="#onPersonatgesButtonClick" />
+        <Button fx:id="consolesButton" text="Consoles" onAction="#onConsolesButtonClick" />
+    </VBox>
+
+    <!-- Panel de Contenido -->
+    <VBox fx:id="contentPanel" spacing="10" alignment="CENTER" style="-fx-padding: 20; visibility: hidden;">
+        <ListView fx:id="itemListViewMobile" prefHeight="300" prefWidth="400" /> <!-- Establecer prefHeight y prefWidth -->
+        <ImageView fx:id="itemImageViewMobile" fitWidth="100" fitHeight="100" />
+        <Text fx:id="itemTitleMobile" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+        <Text fx:id="itemDescriptionMobile" />
+    </VBox>
+    
+</VBox>
