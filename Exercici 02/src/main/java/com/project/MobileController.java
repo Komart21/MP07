@@ -25,9 +25,9 @@ public class MobileController {
     private Button backButton;
 
     @FXML
-    private VBox menuPanel; // Panel de menú
+    private VBox menuPanel; 
     @FXML
-    private VBox contentPanel; // Panel de contenido
+    private VBox contentPanel; 
 
     @FXML
     private ListView<String> itemListViewMobile;
@@ -36,10 +36,10 @@ public class MobileController {
     private ImageView itemImageViewMobile;
 
     @FXML
-    private Text itemDescriptionMobile; // Asegúrate de que en el FXML también es de tipo Text
+    private Text itemDescriptionMobile; 
 
     @FXML
-    private Text itemTitleMobile; // Asegúrate de que en el FXML también es de tipo Text
+    private Text itemTitleMobile; 
 
     // Listas para almacenar elementos manualmente
     private List<String> jocsList;
@@ -56,8 +56,6 @@ public class MobileController {
 
         // Configurar el evento para el ListView
         itemListViewMobile.setOnMouseClicked(event -> updateSelectedItem());
-
-        // Mostrar el menú inicialmente
         showMenuPanel();
     }
 

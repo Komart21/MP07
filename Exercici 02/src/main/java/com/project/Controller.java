@@ -78,7 +78,6 @@ public class Controller {
 
         // Inicializar el mapa de descripciones
         descriptionMap = new HashMap<>();
-        // Descripciones de juegos
         descriptionMap.put("Game Donkey Kong", "¡Únete a Donkey Kong en su emocionante aventura!");
         descriptionMap.put("Metroid", "Explora el universo y enfréntate a la caza de Metroid.");
         descriptionMap.put("Pikmin", "Dirige a los Pikmin en misiones estratégicas.");
@@ -167,14 +166,14 @@ public class Controller {
         if (selectedItem != null) {
             String imagePath = imagePathMap.get(selectedItem); // Obtén la ruta de la imagen
             if (imagePath != null) {
-                itemImageView.setImage(new Image(new File(imagePath).toURI().toString())); // Cargar la imagen
+                itemImageView.setImage(new Image(new File(imagePath).toURI().toString())); // Cargar imagen
             }
 
             // Mostrar el título
             itemTitle.setText(selectedItem); // Mostrar el nombre del elemento
 
             // Mostrar la descripción
-            String description = descriptionMap.get(selectedItem); // Obtén la descripción
+            String description = descriptionMap.get(selectedItem); // Obténemos descripción
             itemDescription.setText(description != null ? description : "Descripción no disponible");
         }
     }

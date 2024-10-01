@@ -12,7 +12,7 @@ public class Main extends Application {
 
     final int WINDOW_WIDTH = 600;
     final int WINDOW_HEIGHT = 400;
-    final int MOBILE_WIDTH_THRESHOLD = 360;  // Umbral para cambiar a la vista móvil
+    final int MOBILE_WIDTH_THRESHOLD = 360;  // Cambiamos vista a movil
 
     private Parent desktopRoot;
     private Parent mobileRoot;
