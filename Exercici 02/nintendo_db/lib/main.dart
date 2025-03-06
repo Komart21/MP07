@@ -12,11 +12,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false, // Ocultar la etiqueta de debug
+      debugShowCheckedModeBanner: false, 
       title: 'Demo Categorías',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 130, 75, 226)),
+            seedColor: const Color(0xFF8B0000)),
         useMaterial3: true,
       ),
       home: const CategoriesScreen(),
@@ -97,9 +97,21 @@ class ApiService {
       throw Exception('Item no encontrado');
     }
   }
+
+  // Obtener el ítem de fondo (Fondo)
+  Future<Item> fetchBackground() async {
+    final response = await http.get(Uri.parse('$baseUrl/items/Fondo'));
+    if (response.statusCode == 200) {
+      List<dynamic> itemsJson = json.decode(response.body);
+      // Debería haber solo un ítem de fondo, tomamos el primero.
+      return Item.fromJson(itemsJson[0]);
+    } else {
+      throw Exception('Fondo no encontrado');
+    }
+  }
 }
 
-// Pantalla de Categorías con desplegable para móviles
+// Pantalla de Categorías con fondo dinámico desde el servidor
 class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({super.key});
 
@@ -109,92 +121,124 @@ class CategoriesScreen extends StatefulWidget {
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
   late Future<List<Category>> futureCategories;
+  late Future<Item> futureBackground;
   String? selectedCategory; // Variable para la categoría seleccionada
 
   @override
   void initState() {
     super.initState();
     futureCategories = ApiService().fetchCategories();
+    futureBackground = ApiService().fetchBackground(); // Cargar el fondo
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Categorías'),
-        backgroundColor: const Color(0xFF3b3db2), // Color de fondo de la AppBar
+        title: const Text('Categorías', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        backgroundColor: const Color(0xFF8B0000), // Color de fondo de la AppBar
       ),
-      body: FutureBuilder<List<Category>>(
-        future: futureCategories,
+      body: FutureBuilder<Item>(
+        future: futureBackground, // Cargar la imagen de fondo
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
+          if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            final categories = snapshot.data!;
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: <Widget>[
-                  // Título de las categorías
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10.0),
-                    child: Text(
-                      'Selecciona una Categoría',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+          } else if (snapshot.hasData) {
+            final background = snapshot.data!;
+            final backgroundUrl = 'http://localhost:3000/${background.photo}'; // URL de la imagen de fondo
+
+            return Stack(
+              children: [
+                // Imagen de fondo
+                Positioned.fill(
+                  child: Image.network(
+                    backgroundUrl,
+                    fit: BoxFit.cover,
                   ),
-                  // Caja con borde que contiene el Dropdown
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
-                      border: Border.all(
-                        color: const Color(0xFF3b3db2),
-                        width: 2.0,
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: DropdownButton<String>(
-                        value: selectedCategory,
-                        hint: const Text("Selecciona una categoría"),
-                        items: categories.map((category) {
-                          return DropdownMenuItem(
-                            value: category.name,
-                            child: Text(category.name),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedCategory = value!;
-                          });
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ItemsScreen(category: selectedCategory!),
+                ),
+                // Contenido sobre la imagen de fondo
+                FutureBuilder<List<Category>>(
+                  future: futureCategories,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (snapshot.hasData) {
+                      final categories = snapshot.data!;
+                      return Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: <Widget>[
+                            // Título de las categorías
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 10.0),
+                              child: Text(
+                                'Selecciona una Categoría',
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black, // Texto en negro
+                                ),
+                              ),
                             ),
-                          );
-                        },
-                        isExpanded: true,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                            // Caja con borde que contiene el Dropdown
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                                color: const Color(0xFF8B0000), // Fondo rojo oscuro
+                                border: Border.all(
+                                  color: const Color(0xFF3b3db2),
+                                  width: 2.0,
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: DropdownButton<String>(
+                                  dropdownColor: const Color(0xFF8B0000), // Fondo rojo oscuro
+                                  value: selectedCategory,
+                                  hint: const Text("Selecciona una categoría", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                                  items: categories.map((category) {
+                                    return DropdownMenuItem(
+                                      value: category.name,
+                                      child: Text(
+                                        category.name,
+                                        style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                                      ),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedCategory = value!;
+                                    });
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ItemsScreen(category: selectedCategory!),
+                                      ),
+                                    );
+                                  },
+                                  isExpanded: true,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    return Container(); // Eliminar el CircularProgressIndicator
+                  },
+                ),
+              ],
             );
           }
+          return Container(); // Eliminar el CircularProgressIndicator
         },
       ),
     );
   }
 }
 
-// Pantalla de Items por Categoría
+// Pantalla de Items por Categoría con fondo dinámico
 class ItemsScreen extends StatelessWidget {
   final String category;
 
@@ -203,40 +247,68 @@ class ItemsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Items de $category')),
-      body: FutureBuilder<List<Item>>(
-        future: ApiService().fetchItemsByCategory(category),
+      appBar: AppBar(title: Text('Items de $category', style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold))),
+      body: FutureBuilder<Item>(
+        future: ApiService().fetchBackground(), // Cargar la imagen de fondo
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
+          if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            final items = snapshot.data!;
-            return ListView.builder(
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(items[index].name),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            ItemDetailScreen(itemId: items[index].id),
-                      ),
-                    );
+          } else if (snapshot.hasData) {
+            final background = snapshot.data!;
+            final backgroundUrl = 'http://localhost:3000/${background.photo}';
+
+            return Stack(
+              children: [
+                // Imagen de fondo
+                Positioned.fill(
+                  child: Image.network(
+                    backgroundUrl,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                // Contenido sobre la imagen de fondo
+                FutureBuilder<List<Item>>(
+                  future: ApiService().fetchItemsByCategory(category),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (snapshot.hasData) {
+                      final items = snapshot.data!;
+                      return ListView.builder(
+                        itemCount: items.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(
+                              items[index].name,
+                              style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      ItemDetailScreen(itemId: items[index].id),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      );
+                    }
+                    return Container(); // Eliminar el CircularProgressIndicator
                   },
-                );
-              },
+                ),
+              ],
             );
           }
+          return Container(); // Eliminar el CircularProgressIndicator
         },
       ),
     );
   }
 }
 
+// Pantalla de Detalle del Item
 class ItemDetailScreen extends StatelessWidget {
   final int itemId;
 
@@ -245,15 +317,13 @@ class ItemDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Detalle del Ítem')),
+      appBar: AppBar(title: const Text('Detalle del Ítem', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))),
       body: FutureBuilder<Item>(
         future: ApiService().fetchItemDetails(itemId),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
+          if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
+          } else if (snapshot.hasData) {
             final item = snapshot.data!;
             final imageUrl =
                 'http://localhost:3000/api/item/${item.id}/photo'; // Cambia la IP si es necesario
@@ -278,8 +348,7 @@ class ItemDetailScreen extends StatelessWidget {
                             width: double.infinity,
                             child: Image.network(
                               imageUrl,
-                              fit: BoxFit
-                                  .contain, // Ajuste para que la imagen se vea completa
+                              fit: BoxFit.contain, // Ajuste para que la imagen se vea completa
                               errorBuilder: (context, error, stackTrace) {
                                 return const Text('Imagen no encontrada');
                               },
@@ -296,6 +365,7 @@ class ItemDetailScreen extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
+                            color: Colors.black, // Texto en negro
                           ),
                         ),
                       ),
@@ -305,7 +375,7 @@ class ItemDetailScreen extends StatelessWidget {
                         child: Text(
                           item.description,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 16),
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
                         ),
                       ),
                     ],
@@ -314,6 +384,7 @@ class ItemDetailScreen extends StatelessWidget {
               ),
             );
           }
+          return Container(); 
         },
       ),
     );
