@@ -69,7 +69,6 @@ app.get('/api/item/:id/photo', (req, res) => {
         return res.status(404).json({ message: 'Imagen no encontrada' });
       }
 
-      // Si la imagen existe, enviarla
       res.sendFile(imagePath);
     });
   } else {

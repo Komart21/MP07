@@ -64,7 +64,7 @@ class Item {
 // Servicio para obtener los datos del servidor NodeJS
 class ApiService {
   static const String baseUrl =
-      'http://localhost:3000/api'; // Cambia 'localhost' por tu IP si es necesario
+      'http://localhost:3000/api'; 
 
   // Obtener todas las categorías
   Future<List<Category>> fetchCategories() async {
@@ -128,7 +128,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   void initState() {
     super.initState();
     futureCategories = ApiService().fetchCategories();
-    futureBackground = ApiService().fetchBackground(); // Cargar el fondo
+    futureBackground = ApiService().fetchBackground(); 
   }
 
   @override
@@ -136,7 +136,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Categorías', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-        backgroundColor: const Color(0xFF8B0000), // Color de fondo de la AppBar
+        backgroundColor: const Color(0xFF8B0000), 
       ),
       body: FutureBuilder<Item>(
         future: futureBackground, // Cargar la imagen de fondo
@@ -145,7 +145,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (snapshot.hasData) {
             final background = snapshot.data!;
-            final backgroundUrl = 'http://localhost:3000/${background.photo}'; // URL de la imagen de fondo
+            final backgroundUrl = 'http://localhost:3000/${background.photo}'; 
 
             return Stack(
               children: [
@@ -176,7 +176,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                 style: TextStyle(
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black, // Texto en negro
+                                  color: Colors.black,
                                 ),
                               ),
                             ),
@@ -295,13 +295,13 @@ class ItemsScreen extends StatelessWidget {
                         },
                       );
                     }
-                    return Container(); // Eliminar el CircularProgressIndicator
+                    return Container(); 
                   },
                 ),
               ],
             );
           }
-          return Container(); // Eliminar el CircularProgressIndicator
+          return Container(); 
         },
       ),
     );
@@ -342,9 +342,9 @@ class ItemDetailScreen extends StatelessWidget {
                             bottom: 20.0), // Margen debajo de la imagen
                         child: ClipRRect(
                           borderRadius:
-                              BorderRadius.circular(12), // Bordes redondeados
+                              BorderRadius.circular(12), 
                           child: Container(
-                            height: 200, // Tamaño reducido para la imagen
+                            height: 200, 
                             width: double.infinity,
                             child: Image.network(
                               imageUrl,
